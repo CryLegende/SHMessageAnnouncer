@@ -1,0 +1,264 @@
+# Configuration principale de SHMessageAnnouncer
+# ------------------------------------------------
+# announcer_enabled: Démarre-t-il les annonces au lancement du serveur ?
+# announcer_random: Les annonces dans la 'interval_announcement_list' doivent-elles être aléatoires ? (false = dans l'ordre)
+# announce_interval: Intervalle entre chaque annonce (en secondes).
+
+announcer_enabled: true
+announcer_random: false
+announce_interval: 324
+
+# Configuration du son joué avec chaque annonce
+sound:
+  enabled: true
+  sound_name: BLOCK_NOTE_BLOCK_PLING
+  volume: 10
+  pitch: 0.5
+
+# Liste des annonces à diffuser à intervalle régulier.
+# Les noms doivent correspondre aux annonces définies ci-dessous.
+interval_announcement_list:
+- vote
+#- doublevote
+- enchanteur
+- trade
+- challenges
+- report
+- duel
+- discord
+- regles
+- farming
+- afkt
+- slotsponsor
+- topvote
+- 300votes
+- tokensenfolie
+- voteparty
+- codex
+- skyhand
+- suggestions
+
+# Définition des annonces.
+# Chaque annonce utilise le format MiniMessage pour les couleurs, clics, hovers, etc.
+# <br>  est utilisé pour les sauts de ligne à l'intérieur d'une même annonce.
+announcements:
+  tournois:
+  - '<hover:show_text:"<#F9D423>Cliquez pour plus d''infos sur le tournoi !"><click:run_command:''/tournois''>
+    <br> <gradient:#FF416C:#FF4B2B><b>Tournois du Nouvel An Lunaire !</b></gradient> <#FF416C>🏮
+    <br> 
+    <br> <white>Participez au tournois du nouvel an lunaire et tentez de
+    <br> <white>finir dans le top pour gagner des récompenses !
+    <br> '
+
+  slotsponsor:
+  - '<hover:show_text:"<#E4A94B>Cliquez pour voir les slots disponibles (/slot)"><click:run_command:''/slot''>
+    <br> <#E4A94B><b>Slots Sponsor !</b> <#E4A94B>🚀
+    <br> 
+    <br> <white>Mettez en avant votre île contre des <#D4AC0D>SHCoins
+    <br> <white>grâce aux <#2ECC71>slots sponsor<white> !
+    <br> '
+
+  afkt:
+  - '<hover:show_text:"<#F1C40F>Restez AFK au spawn pour gagner des SHCoins !"><click:run_command:''/spawn''>
+    <br> <#F1C40F><b>Gains AFK !</b> <#F1C40F>💰
+    <br> 
+    <br> <white>Gagnez des <#F1C40F>SHCoins<white> tout en
+    <br> <white>restant <#D4AC0D>AFK<white> au <#F1C40F>Spawn
+    <br> '
+
+  vote:
+  - '<hover:show_text:"<#40E0D0>Cliquez pour voter et soutenir SkyHand ! <gray>(Merci ❤)"><click:open_url:''https://skyhand.fr/vote''>
+    <br> <#40E0D0><b>Votez pour SkyHand !</b> <#40E0D0>✨
+    <br> 
+    <br> <white>Voter permet de gagner des tonnes de récompenses
+    <br> <white>tout en soutenant le serveur.
+    <br> '
+
+  enchanteur:
+  - '<hover:show_text:"<#D291BC>Utilisez /enchant pour découvrir les enchantements !"><click:run_command:''/enchant''>
+    <br> <#D291BC><b>60 enchantements inédits !</b> <#D291BC>✨
+    <br> 
+    <br> <white>Achetez des dizaines d''<#D291BC>enchantements custom<white>
+    <br> <white>avec votre <#9B59B6>experience &8(&7/enchant&8)
+    <br> '
+
+  trade:
+  - '<hover:show_text:"<#5DADE2>Utilisez /trade <joueur> pour échanger !"><click:suggest_command:''/trade ''>
+    <br> <#5DADE2><b>Échanges Sécurisés !</b> <#5DADE2>🤝
+    <br> 
+    <br> <white>Faites des <#58D68D>échanges <white>en toute <#58D68D>sécurité
+    <br> <white>avec d''autres joueurs. &8(&7/trade <joueur>&8)
+    <br> '
+
+  challenges:
+  - '<hover:show_text:"<#F39C12>Accédez à vos quêtes avec /c !"><click:run_command:''/quest''>
+    <br> <#F39C12><b>Quêtes Journalières !</b> <#F39C12>📜
+    <br> 
+    <br> <white>Complétez vos <#F39C12>quêtes<white> pour gagner des
+    <br> <#F39C12>SHCoins<white> rapidement. &8(&7/c&8)
+    <br> '
+  
+  report:
+  - '<hover:show_text:"<#E67E22>Signalez un joueur problématique ici !"><click:suggest_command:''/report ''>
+    <br> <#E67E22><b>Signaler un Joueur !</b> <#E67E22>🛡
+    <br> 
+    <br> <white>Un problème avec un joueur ? Utilisez le
+    <br> <#E67E22>système de report <white>pour <#E67E22>prévenir<white> le staff.
+    <br> '
+
+  duel:
+  - '<hover:show_text:"<#AAB7B8>Utilisez /duel pour provoquer un joueur !"><click:suggest_command:''/duel ''>
+    <br> <#AAB7B8><b>Défiez vos Amis !</b> <#AAB7B8>⚔
+    <br> 
+    <br> <white>Défiez <#82E0AA>vos amis<white> dans un combat
+    <br> <white>singulier. &8(&7/duel <joueur>&8)
+    <br> '
+    
+  discord:
+  - '<hover:show_text:"<#7289DA>Cliquez pour rejoindre le Discord (/discord)"><click:run_command:''/discord''>
+    <br> <#7289DA><b>Rejoignez notre Discord !</b> <#7289DA>💬
+    <br> 
+    <br> <white>Rejoignez notre <#7289DA>Discord<white> pour être au
+    <br> <white>courant de nos futurs <#43B581>giveaways<white> !
+    <br> '
+    
+  regles:
+  - '<hover:show_text:"<#27AE60>Lisez les règles avec /regles !"><click:run_command:''/regles''>
+    <br> <#27AE60><b>Lisez les Règles !</b> <#27AE60>📜
+    <br> 
+    <br> <white>N''oubliez pas de lire les <#27AE60>règles<white> si vous ne
+    <br> <white>voulez pas être <#C0392B>sanctionné
+    <br> '
+  
+  topvote:
+  - '<hover:show_text:"<#EC407A>Votez pour le dépasser ! <gray>(Merci ❤)"><click:open_url:''https://skyhand.fr/vote''>
+    <br> <#EC407A><b>Top Voteur du Jour !</b> <#EC407A>🏆
+    <br> 
+    <br> <#EC407A>%voteparty_top_DAILY_name_1%<white> est le joueur ayant le plus voté aujourd''hui ! 
+    <br> <white>Votez encore <#EC407A>%math_0:rounding_{voteparty_top_DAILY_votes_1}-{voteparty_totalvotes_DAILY}% fois<white> pour le rattraper !
+    <br> '
+
+  300votes:
+  - '<hover:show_text:"&dVotez pour obtenir le grade VIP (/vote)"><click:run_command:''/vote''>
+    <br> &d<b>Récompense Vote Mensuel !</b> &d🎉
+    <br> 
+    <br> <white>Votez encore &d%math_0:_300-{voteparty_totalvotes_monthly}% fois<white> ce mois ci
+    <br> <white>et obtenez le grade &d<b>VIP</b><white> pendant 1 semaine !
+    <br> <gray>(Uniquement pour les joueurs)
+    <br> '
+
+  tokensenfolie:
+  - '<hover:show_text:"<#FDB813>Rejoignez le Discord pour participer !"><click:run_command:''/discord''>
+    <br> <gradient:#FDB813:#FFD700><b>Tokens en Folie !</b></gradient> <#FFD700>💸
+    <br> 
+    <br> <white>Participez chaque jour au <#FFD700>Tokens en folie<white> sur le discord.
+    <br> <white>Obtenez un <#FFD700>code aléatoire<white> et <#FFD700>gagnez<white> des <#FFD700>tokens<white> facilement.
+    <br> '
+  
+  voteparty:
+  - '<hover:show_text:"<gray>Prochain VoteParty dans <#3498DB>%voteparty_votes_required_party% votes !"><click:open_url:''https://skyhand.fr/vote''>
+    <br> <#3498DB><b>VoteParty !</b> <#3498DB>🎉
+    <br> 
+    <br> <white>Le <#3498DB>VoteParty<white> est un événement communautaire où au bout de
+    <br> <#3498DB>%voteparty_votes_required_total% votes<white> vous recevrez des <#3498DB>récompenses exclusives<white> !
+    <br> '
+
+  codex:
+  - '<hover:show_text:"<gray>Vous avez déjà découvert <#9B59B6>%shcodex_discovered_count% régions (/codex)"><click:run_command:''/codex''>
+    <br> <#BE93D4><b>Explorez le Codex !</b> <#BE93D4>🗺
+    <br> 
+    <br> <white>Explorez les environs et découvrez de
+    <br> <white>nouvelles zones pour compléter votre <#BE93D4>codex
+    <br> '
+  
+  skyhand:
+  - '<hover:show_text:"<#1E90FF>Cliquez ici pour tout explorer !"><click:run_command:''/skyhand''>
+    <br> <gradient:#1E90FF:#00BFFF><b>Fonctionnalités Inédites !</b></gradient> <#00BFFF>🔥
+    <br> 
+    <br> <white>Plus d''une dizaine de systèmes innovants
+    <br> <white>à découvrir sur les Skyblocks de <#1E90FF><b>SkyHand</b><white> !
+    <br> '
+    
+  promoboutique:
+  - '<hover:show_text:"<#22bb33>Profitez de -20% sur toute la boutique !"><click:open_url:''https://store.skyhand.fr''>
+    <br> <gradient:#22bb33:#A2D729><b>PROMOTION BOUTIQUE !</b></gradient> <#A2D729>🛍
+    <br> 
+    <br> <white>À l''occasion du 11 novembre,
+    <br> <white>profitez de <#22bb33>20% de réduction<white> sur l''<#22bb33>ensemble de la Boutique<white> !
+    <br> <gray>Fin dans %server_countdown_dd.MM.yyyy HH:mm:ss_16.11.2025 23:59:59%
+    <br> '
+  
+  doublevote:
+  - '<hover:show_text:"<#FFBF00>Votez pour doubler vos gains ! <gray>(Merci ❤) - Fin dans %server_countdown_dd.MM.yyyy HH:mm:ss_05.09.2026 23:59:59%"><click:open_url:''https://skyhand.fr/vote''>
+    <br> <gradient:#FFBF00:#FFD700><b>ÉVÉNEMENT DOUBLE VOTE !</b></gradient> <#FFD700>✨
+    <br> 
+    <br> <#FFBF00>✯ <white>Les récompenses de vote sont actuellement <#FFD700><b>doublées</b><white> !
+    <br> <white>Votez ici: <#FFD700>https://skyhand.fr/vote
+    <br> '
+  
+  monde_paques:
+  - '<hover:show_text:"<#F4C2C2>Explorez le Monde de Pâques (/spawn)"><click:run_command:''/spawn''>
+    <br> <gradient:#F4C2C2:#FFB6C1><b>Monde de Pâques Ouvert !</b></gradient> <#FFB6C1>🐰
+    <br> 
+    <br> <white>Ouverture du monde de Pâques, rendez-vous
+    <br> <white>au <#F4C2C2>spawn<white> pour vous y téléporter !
+    <br> '
+
+  koth:
+  - '<hover:show_text:"<#E23B44>Rejoignez le KoTH (/warp arene)"><click:run_command:''/warp arene''>
+    <br>                     <gradient:#E23B44:#C31432><b><u>EVENT KoTH EN COURS !</u></b></gradient> <#C31432>🔥
+    <br> 
+    <br> <white>L''évènement <#E23B44><b>KoTH</b><white> a débuté dans l''arène PvP !
+    <br> <white>Capturez jusqu''à 6 zones pour gagner des récompenses !
+    <br> '
+  
+  paques:
+  - '<hover:show_text:"<#FFB3DE>Participez à l''Attrape Lapin (/warp paques)"><click:run_command:''/warp paques''>
+    <br>                       <gradient:#FFB3DE:#FF85C0><b>ATTRAPE LAPIN EN COURS !</b></gradient> <#FF85C0>🐇
+    <br> 
+    <br> <white>L''événement <#FFB3DE><b>Attrape Lapin<white> a débuté dans le monde de Pâques !
+    <br> <white>Attrapez un maximum de <#FFB3DE>lapins<white> pour gagner des chocolats !
+    <br> '
+
+  cargaison:
+  - '<hover:show_text:"<#E49B0F>Rejoignez le discord pour ne rien manquer !"><click:run_command:''/warp arene''>
+    <br> <gradient:#E49B0F:#CD853F><b>DOUBLE CARGAISON CE SOIR !</b></gradient> <#CD853F>🚢
+    <br> 
+    <br> <white>Profitez ce soir d''un <#E49B0F>deuxième Cargaison<white> lancé à
+    <br> <#E49B0F>18h35<white>, juste après la fin du premier !
+    <br> '
+
+  marchand:
+  - '<hover:show_text:"<#6A5ACD>Cliquez ici pour voir vos items perdus (/shvoid)"><click:run_command:''/shvoid''>
+    <br> <#6A5ACD><b>Marchand des Abîmes !</b> <#6A5ACD>👻
+    <br> 
+    <br> <white>Vous avez perdu des items dans le vide des abîmes ?
+    <br> <white>Récupérez-les auprès du <#6A5ACD><b>Marchand des Abîmes</b>
+    <br> '
+
+  suggestions:
+  - '<hover:show_text:"<#89CFF0>Cliquez ici pour rejoindre le discord !"><click:run_command:''/discord''>
+    <br> <#89CFF0><b>Partagez vos suggestions !</b> <#89CFF0>💡
+    <br> 
+    <br> <#A0CFEF>Vous avez une suggestion à proposer ?
+    <br>   <dark_gray>• <white>Rendez-vous sur le discord pour
+    <br> accéder au salon dédié &8(<#89CFF0>#suggestions&8)
+    <br> '
+
+  noel:
+  - '<hover:show_text:"<#29F6FF>Participez à l''évent drop (/warp christmas)"><click:run_command:''/warp christmas''>
+    <br>                       <gradient:#ffffff:#29F6FF><b>EVENEMENT DROP</b></gradient> <#29F6FF>🔥
+    <br> 
+    <br> <white>L''event <#29F6FF><b>Drop</b><white> a débuter dans le Monde de Noël dans <#29F6FF>%server_countdown_dd.MM.yyyy HH:mm:ss_30.12.2025 16:45:00%<white>.
+    <br>
+    <br> <#29F6FF>Explication : <white>Une pluie d''items fera son apparition, vous devrez en ramasser le plus possible.
+    <br> '
+
+  debut-drop:
+  - '<hover:show_text:"<#29F6FF>Participez à l''évent drop (/warp christmas)"><click:run_command:''/warp christmas''>
+    <br>                       <gradient:#ffffff:#29F6FF><b>EVENEMENT DROP</b></gradient> <#29F6FF>🔥
+    <br> 
+    <br> <white>L''event <#29F6FF><b>Drop</b><white> a débuté dans le Monde de Noël.
+    <br>
+    <br> <#29F6FF>Explication : <white>Une pluie d''items fera son apparition, vous devrez en ramasser le plus possible.
+    <br> '

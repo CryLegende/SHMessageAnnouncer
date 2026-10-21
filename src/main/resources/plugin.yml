@@ -1,0 +1,13 @@
+name: SHMessageAnnouncer
+version: '${project.version}'
+main: org.Cry_Legende.sHMessageAnnouncer.SHMessageAnnouncer
+api-version: '1.20'
+author: Cry_Legende
+description: A modern message announcer with MiniMessage and PAPI support.
+depend: [PlaceholderAPI]
+
+commands:
+  msa:
+    description: Main command for SHMessageAnnouncer.
+    aliases: [shmessageannouncer]
+    permission: shmessageannouncer.admin

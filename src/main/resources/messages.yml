@@ -1,0 +1,30 @@
+# Préfixe utilisé pour la plupart des messages du plugin.
+prefix: "<gray><b>«</b> <yellow><b>SH</b> <dark_gray><b>»</b> <gray>"
+
+# Messages généraux
+reload_success: "<green>La configuration a été rechargée avec succès !</green>"
+announcer_started: "<green>Les annonces automatiques ont démarré.</green>"
+announcer_stopped: "<red>Les annonces automatiques ont été arrêtées.</red>"
+announcer_already_running: "<yellow>Les annonces automatiques sont déjà en cours.</yellow>"
+announcer_not_running: "<yellow>Les annonces automatiques ne sont pas en cours.</yellow>"
+
+# Messages d'erreur
+no_permission: "<red>Vous n'avez pas la permission d'exécuter cette commande.</red>"
+player_not_found: "<red>Le joueur '<arg>' n'a pas été trouvé.</red>"
+announcement_not_found: "<red>L'annonce '<arg>' n'existe pas.</red>"
+invalid_usage: "<red>Utilisation incorrecte. Essayez : <gold>/msa <arg></gold></red>"
+
+# Messages de la commande 'list'
+list_header_active: "<gold>--- Liste des annonces actives ---</gold>"
+list_header_all: "<gold>--- Liste de toutes les annonces ---</gold>"
+list_entry: "<gray>- <white><arg></white>"
+list_empty: "<gray>Aucune annonce à afficher.</gray>"
+
+# Message d'aide
+help_header: "<gold>----------- SHMessageAnnouncer Aide -----------</gold>"
+help_start: "<white>/msa start</white> <gray>- Démarre les annonces à intervalle.</gray>"
+help_stop: "<white>/msa stop</white> <gray>- Arrête les annonces à intervalle.</gray>"
+help_reload: "<white>/msa reload</white> <gray>- Recharge la configuration du plugin.</gray>"
+help_list: "<white>/msa list <active/all></white> <gray>- Liste les annonces.</gray>"
+help_send: "<white>/msa send <joueur> <id></white> <gray>- Envoie une annonce à un joueur.</gray>"
+help_announce: "<white>/msa announce <id> [joueur_papi]</white> <gray>- Envoie une annonce à tous.</gray>"
