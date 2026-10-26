@@ -185,7 +185,7 @@ public class AnnouncementManager {
     public void playSound(Audience audience) {
         ConfigManager config = plugin.getConfigManager();
         if (config.isSoundEnabled()) {
-            Sound sound = Sound.sound(config.getSoundName().getKey(), Sound.Source.MASTER, config.getSoundVolume(), config.getSoundPitch());
+            Sound sound = Sound.sound(config.getSoundName(), Sound.Source.MASTER, config.getSoundVolume(), config.getSoundPitch());
             audience.playSound(sound);
         }
     }

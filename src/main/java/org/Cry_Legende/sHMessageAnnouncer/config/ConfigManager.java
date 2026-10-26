@@ -1,12 +1,15 @@
 package org.Cry_Legende.sHMessageAnnouncer.config;
 
 import org.Cry_Legende.sHMessageAnnouncer.SHMessageAnnouncer;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ConfigManager {
@@ -36,9 +39,8 @@ public class ConfigManager {
         this.announceInterval = config.getInt("announce_interval", 300);
 
         this.soundEnabled = config.getBoolean("sound.enabled", false);
-        try {
-            this.soundName = Sound.valueOf(config.getString("sound.sound_name", "BLOCK_NOTE_BLOCK_PLING").toUpperCase());
-        } catch (IllegalArgumentException e) {
+        this.soundName = sound(config.getString("sound.sound_name", "BLOCK_NOTE_BLOCK_PLING"));
+        if (this.soundName == null) {
             plugin.getLogger().warning("Invalid sound name in config.yml: " + config.getString("sound.sound_name") + ". Using default.");
             this.soundName = Sound.BLOCK_NOTE_BLOCK_PLING;
         }
@@ -51,6 +53,23 @@ public class ConfigManager {
         if (this.announcementsSection == null) {
             plugin.getLogger().severe("The 'announcements' section is missing from your config.yml! Creating a new one.");
             this.announcementsSection = plugin.getConfig().createSection("announcements");
+        }
+    }
+
+    /**
+     * Son lu en config : ancien nom (ENTITY_PLAYER_LEVELUP) ou clé (minecraft:entity.player.levelup).
+     */
+    static Sound sound(String raw) {
+        if (raw == null || raw.isBlank()) return null;
+        String s = raw.trim();
+        if (s.indexOf(':') >= 0 || s.indexOf('.') >= 0) {
+            NamespacedKey key = NamespacedKey.fromString(s.toLowerCase(Locale.ROOT));
+            return key == null ? null : Registry.SOUND_EVENT.get(key);
+        }
+        try {
+            return (Sound) Sound.class.getField(s.toUpperCase(Locale.ROOT)).get(null);
+        } catch (ReflectiveOperationException | ClassCastException e) {
+            return null;
         }
     }
 

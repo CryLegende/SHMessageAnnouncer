@@ -63,7 +63,7 @@ public final class SHMessageAnnouncer extends JavaPlugin {
             return;
         }
 
-        long intervalTicks = configManager.getAnnounceInterval() * 20L;
+        long intervalTicks = Math.max(1, configManager.getAnnounceInterval()) * 20L;
         announcerTask = new AnnouncerTask(this);
         announcerTask.runTaskTimer(this, intervalTicks, intervalTicks);
     }
