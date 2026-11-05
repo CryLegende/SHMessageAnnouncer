@@ -134,15 +134,15 @@ announcements:
   - '<hover:show_text:"<#EC407A>Votez pour le dépasser ! <gray>(Merci ❤)"><click:open_url:''https://skyhand.fr/vote''>
     <br> <#EC407A><b>Top Voteur du Jour !</b> <#EC407A>🏆
     <br> 
-    <br> <#EC407A>%voteparty_top_DAILY_name_1%<white> est le joueur ayant le plus voté aujourd''hui ! 
-    <br> <white>Votez encore <#EC407A>%math_0:rounding_{voteparty_top_DAILY_votes_1}-{voteparty_totalvotes_DAILY}% fois<white> pour le rattraper !
+    <br> <#EC407A>%shvotesreward_top_daily_name_1%<white> est le joueur ayant le plus voté aujourd''hui ! 
+    <br> <white>Votez encore <#EC407A>%math_0:rounding_{shvotesreward_top_daily_votes_1}-{shvotesreward_votes_daily}% fois<white> pour le rattraper !
     <br> '
 
   300votes:
   - '<hover:show_text:"&dVotez pour obtenir le grade VIP (/vote)"><click:run_command:''/vote''>
     <br> &d<b>Récompense Vote Mensuel !</b> &d🎉
     <br> 
-    <br> <white>Votez encore &d%math_0:_300-{voteparty_totalvotes_monthly}% fois<white> ce mois ci
+    <br> <white>Votez encore &d%math_0:_300-{shvotesreward_votes_monthly}% fois<white> ce mois ci
     <br> <white>et obtenez le grade &d<b>VIP</b><white> pendant 1 semaine !
     <br> <gray>(Uniquement pour les joueurs)
     <br> '
@@ -156,11 +156,11 @@ announcements:
     <br> '
   
   voteparty:
-  - '<hover:show_text:"<gray>Prochain VoteParty dans <#3498DB>%voteparty_votes_required_party% votes !"><click:open_url:''https://skyhand.fr/vote''>
+  - '<hover:show_text:"<gray>Prochain VoteParty dans <#3498DB>%shvotesreward_party_remaining% votes !"><click:open_url:''https://skyhand.fr/vote''>
     <br> <#3498DB><b>VoteParty !</b> <#3498DB>🎉
     <br> 
     <br> <white>Le <#3498DB>VoteParty<white> est un événement communautaire où au bout de
-    <br> <#3498DB>%voteparty_votes_required_total% votes<white> vous recevrez des <#3498DB>récompenses exclusives<white> !
+    <br> <#3498DB>%shvotesreward_party_needed% votes<white> vous recevrez des <#3498DB>récompenses exclusives<white> !
     <br> '
 
   codex:
