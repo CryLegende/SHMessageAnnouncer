@@ -1,5 +1,23 @@
 # Configuration principale de SHMessageAnnouncer
 # ------------------------------------------------
+# Plugin : annonces automatiques envoyées à tous les joueurs à intervalle régulier, en MiniMessage, avec un son et les
+# placeholders de PlaceholderAPI évalués pour chaque joueur. Avec SHNetwork, une seule rotation tourne pour tous les
+# serveurs Opale (voir la section 'reseau' plus bas).
+#
+# Commandes (alias : /shmessageannouncer) :
+#   /msa start                     Démarre les annonces automatiques (sur tous les serveurs avec SHNetwork).
+#   /msa stop                      Arrête les annonces automatiques (sur tous les serveurs avec SHNetwork).
+#   /msa reload                    Recharge config.yml et messages.yml sur ce serveur.
+#   /msa list <active|all>         Liste les annonces de la rotation, ou toutes les annonces.
+#   /msa announce <id> [joueur]    Envoie une annonce à tous les joueurs (de tous les serveurs avec SHNetwork), avec les
+#                                  placeholders du joueur donné s'il y en a un ; l'ordre de la rotation n'est pas touché.
+#   /msa send <joueur> <id>        Envoie une annonce à un joueur.
+#
+# Permission :
+#   shmessageannouncer.admin       Toutes les commandes (par défaut : op).
+#
+# Les messages des commandes sont dans 'messages.yml'.
+#
 # announcer_enabled: Démarre-t-il les annonces au lancement du serveur ?
 # announcer_random: Les annonces dans la 'interval_announcement_list' doivent-elles être aléatoires ? (false = dans l'ordre)
 # announce_interval: Intervalle entre chaque annonce (en secondes).
@@ -14,6 +32,17 @@ sound:
   sound_name: BLOCK_NOTE_BLOCK_PLING
   volume: 10
   pitch: 0.5
+
+# Mode réseau (SHNetwork). Les annonces automatiques ne tournent que sur le serveur meneur (tâche 'shmessageannouncer') :
+# il choisit l'annonce, fait avancer la liste et la publie ; chaque serveur l'envoie à ses propres joueurs au même
+# moment, avec le même son, en évaluant les placeholders pour chacun d'eux. Si le meneur tombe, un autre serveur reprend
+# la rotation là où elle s'était arrêtée. Le config.yml doit être le même sur tous les serveurs.
+# Sans SHNetwork, ou avec actif: false, chaque serveur fait tourner ses annonces comme avant.
+# Demande un redémarrage : actif, canal.
+reseau:
+  actif: true
+  # Canal du bus SHNetwork sur lequel les serveurs se transmettent les annonces
+  canal: messageannouncer
 
 # Liste des annonces à diffuser à intervalle régulier.
 # Les noms doivent correspondre aux annonces définies ci-dessous.

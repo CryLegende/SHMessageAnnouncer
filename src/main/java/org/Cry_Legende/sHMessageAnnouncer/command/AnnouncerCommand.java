@@ -4,6 +4,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.Cry_Legende.sHMessageAnnouncer.SHMessageAnnouncer;
 import org.Cry_Legende.sHMessageAnnouncer.announcer.AnnouncementManager;
 import org.Cry_Legende.sHMessageAnnouncer.config.MessageManager;
+import org.Cry_Legende.sHMessageAnnouncer.network.NetworkAnnouncer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AnnouncerCommand implements CommandExecutor, TabCompleter {
@@ -56,7 +58,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleStart(CommandSender sender) {
-        if (plugin.getAnnouncerTask() != null && !plugin.getAnnouncerTask().isCancelled()) {
+        if (plugin.isAnnouncerRunning()) {
             msg.sendMessage(sender, "announcer_already_running");
             return;
         }
@@ -65,7 +67,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleStop(CommandSender sender) {
-        if (plugin.getAnnouncerTask() == null || plugin.getAnnouncerTask().isCancelled()) {
+        if (!plugin.isAnnouncerRunning()) {
             msg.sendMessage(sender, "announcer_not_running");
             return;
         }
@@ -115,17 +117,31 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        // Avec SHNetwork, le joueur dont on emprunte les placeholders peut être sur un autre serveur
+        NetworkAnnouncer network = plugin.getNetwork();
         Player papiParser = null;
+        UUID papiElsewhere = null;
         if (args.length > 2) {
             papiParser = Bukkit.getPlayer(args[2]);
-            if (papiParser == null) {
+            if (papiParser == null && network != null) {
+                papiElsewhere = network.find(args[2]);
+            }
+            if (papiParser == null && papiElsewhere == null) {
                 msg.sendMessage(sender, "player_not_found", Placeholder.unparsed("arg", args[2]));
                 return;
             }
         }
 
-        final Player finalPapiParser = papiParser;
-        Bukkit.getOnlinePlayers().forEach(player -> announcementManager.sendAnnouncement(player, id, finalPapiParser != null ? finalPapiParser : player));
+        if (network != null) {
+            // Tous les joueurs de tous les serveurs, l'ordre des annonces automatiques n'est pas touché
+            if (papiElsewhere != null) {
+                network.announceFor(id, papiElsewhere);
+            } else {
+                network.announce(id, papiParser);
+            }
+            return;
+        }
+        announcementManager.broadcast(id, papiParser);
     }
 
     private void handleSend(CommandSender sender, String[] args) {
@@ -134,7 +150,10 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
             return;
         }
         Player target = Bukkit.getPlayer(args[1]);
-        if (target == null) {
+        // Avec SHNetwork, le joueur visé peut être sur un autre serveur
+        NetworkAnnouncer network = plugin.getNetwork();
+        UUID remote = target == null && network != null ? network.find(args[1]) : null;
+        if (target == null && remote == null) {
             msg.sendMessage(sender, "player_not_found", Placeholder.unparsed("arg", args[1]));
             return;
         }
@@ -143,7 +162,20 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
             msg.sendMessage(sender, "announcement_not_found", Placeholder.unparsed("arg", id));
             return;
         }
-        announcementManager.sendAnnouncement(target, id, target);
+        if (target != null) {
+            announcementManager.sendAnnouncement(target, id, target);
+        } else {
+            network.send(remote, id);
+        }
+    }
+
+    /** Pseudos proposés à la complétion : les joueurs de tout le réseau avec SHNetwork, de ce serveur sinon. */
+    private List<String> playerNames() {
+        NetworkAnnouncer network = plugin.getNetwork();
+        if (network != null) {
+            return network.playerNames();
+        }
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
     }
 
     @Override
@@ -162,7 +194,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
                     completions.addAll(Arrays.asList("active", "all"));
                     break;
                 case "send":
-                    completions.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+                    completions.addAll(playerNames());
                     break;
                 case "announce":
                     completions.addAll(announcementManager.getAnnouncementIds());
@@ -174,7 +206,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
                     completions.addAll(announcementManager.getAnnouncementIds());
                     break;
                 case "announce":
-                    completions.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
+                    completions.addAll(playerNames());
                     break;
             }
         }

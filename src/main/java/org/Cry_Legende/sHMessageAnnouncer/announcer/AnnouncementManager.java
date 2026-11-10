@@ -9,6 +9,7 @@ import org.Cry_Legende.sHMessageAnnouncer.SHMessageAnnouncer;
 import org.Cry_Legende.sHMessageAnnouncer.announcement.Announcement;
 import org.Cry_Legende.sHMessageAnnouncer.config.ConfigManager;
 import org.Cry_Legende.sHMessageAnnouncer.util.TextUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.json.JSONException;
@@ -159,22 +160,57 @@ public class AnnouncementManager {
      * @param papiParser The player to use for parsing PlaceholderAPI placeholders.
      */
     public void sendAnnouncement(Audience audience, String id, Player papiParser) {
-        Announcement announcement = announcements.get(id);
-        if (announcement == null) return;
+        List<String> lines = render(id, papiParser);
+        if (lines == null) return;
+        sendRendered(audience, lines);
+    }
 
+    /**
+     * Envoie l'annonce à tous les joueurs de ce serveur, chacun avec ses propres placeholders, ou avec ceux de
+     * {@code papiParser} s'il est donné.
+     */
+    public void broadcast(String id, Player papiParser) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            sendAnnouncement(player, id, papiParser != null ? papiParser : player);
+        }
+    }
+
+    /**
+     * Évalue les placeholders de l'annonce pour un joueur.
+     *
+     * @return les lignes finales, au format MiniMessage, ou null si l'annonce n'existe pas
+     */
+    public List<String> render(String id, Player papiParser) {
+        Announcement announcement = announcements.get(id);
+        if (announcement == null) return null;
+
+        List<String> lines = new ArrayList<>();
         for (Component line : announcement.lines()) {
             // Serialize component to string to parse PAPI
             String serializedLine = miniMessage.serialize(line);
             String papiParsedLine = PlaceholderAPI.setPlaceholders(papiParser, serializedLine);
 
             // Translate legacy '&' codes that might be returned by PlaceholderAPI
-            String finalLine = TextUtil.translateLegacyCodes(papiParsedLine);
+            lines.add(TextUtil.translateLegacyCodes(papiParsedLine));
+        }
+        return lines;
+    }
 
+    /** Envoie des lignes déjà évaluées, puis joue le son configuré. */
+    public void sendRendered(Audience audience, List<String> lines) {
+        for (String finalLine : lines) {
             // Deserialize the final, fully processed string and send it
             audience.sendMessage(miniMessage.deserialize(finalLine));
         }
 
         playSound(audience);
+    }
+
+    /** Envoie des lignes déjà évaluées à tous les joueurs de ce serveur. */
+    public void broadcastRendered(List<String> lines) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            sendRendered(player, lines);
+        }
     }
 
     /**
