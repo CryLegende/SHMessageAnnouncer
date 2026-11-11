@@ -4,17 +4,29 @@
 # placeholders de PlaceholderAPI évalués pour chaque joueur. Avec SHNetwork, une seule rotation tourne pour tous les
 # serveurs Opale (voir la section 'reseau' plus bas).
 #
-# Commandes (alias : /shmessageannouncer) :
-#   /msa start                     Démarre les annonces automatiques (sur tous les serveurs avec SHNetwork).
-#   /msa stop                      Arrête les annonces automatiques (sur tous les serveurs avec SHNetwork).
-#   /msa reload                    Recharge config.yml et messages.yml sur ce serveur.
-#   /msa list <active|all>         Liste les annonces de la rotation, ou toutes les annonces.
-#   /msa announce <id> [joueur]    Envoie une annonce à tous les joueurs (de tous les serveurs avec SHNetwork), avec les
-#                                  placeholders du joueur donné s'il y en a un ; l'ordre de la rotation n'est pas touché.
-#   /msa send <joueur> <id>        Envoie une annonce à un joueur.
+# Commandes (racine /shmessageannouncer, alias /msa) :
+#   /shmessageannouncer start                     Démarre les annonces automatiques (sur tous les serveurs avec SHNetwork).
+#   /shmessageannouncer stop                      Arrête les annonces automatiques (sur tous les serveurs avec SHNetwork).
+#   /shmessageannouncer reload                    Recharge config.yml et messages.yml sur ce serveur.
+#   /shmessageannouncer list <active|all>         Liste les annonces de la rotation, ou toutes les annonces.
+#   /shmessageannouncer announce <id> [joueur]    Envoie une annonce à tous les joueurs (de tous les serveurs avec
+#                                                 SHNetwork), avec les placeholders du joueur donné s'il y en a un ;
+#                                                 l'ordre de la rotation n'est pas touché.
+#   /shmessageannouncer send <joueur> <id>        Envoie une annonce à un joueur.
+# Toutes marchent depuis la console. Sans sous-commande, une ligne d'usage donne celles que vous pouvez utiliser.
 #
-# Permission :
-#   shmessageannouncer.admin       Toutes les commandes (par défaut : op).
+# Permissions (op par défaut) :
+#   shmessageannouncer.admin            Toutes les sous-commandes.
+#   shmessageannouncer.admin.start      /shmessageannouncer start
+#   shmessageannouncer.admin.stop       /shmessageannouncer stop
+#   shmessageannouncer.admin.reload     /shmessageannouncer reload
+#   shmessageannouncer.admin.list       /shmessageannouncer list
+#   shmessageannouncer.admin.announce   /shmessageannouncer announce
+#   shmessageannouncer.admin.send       /shmessageannouncer send
+#
+# Un reload valide config.yml et messages.yml avant de les appliquer : si l'un est invalide, rien ne change et le
+# message donne le fichier et l'erreur. Il relance le minuteur (la rotation repart du début) ; sans SHNetwork, les
+# annonces redémarrent si announcer_enabled est vrai. La section 'reseau' demande un redémarrage.
 #
 # Les messages des commandes sont dans 'messages.yml'.
 #

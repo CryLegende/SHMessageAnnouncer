@@ -8,9 +8,16 @@ import org.Cry_Legende.sHMessageAnnouncer.config.MessageManager;
 import org.Cry_Legende.sHMessageAnnouncer.network.NetBus;
 import org.Cry_Legende.sHMessageAnnouncer.network.NetworkAnnouncer;
 import org.Cry_Legende.sHMessageAnnouncer.network.ShNetworkBus;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -40,7 +47,10 @@ public final class SHMessageAnnouncer extends JavaPlugin {
         enableNetwork();
         loadPlugin(false);
 
-        Objects.requireNonNull(getCommand("msa")).setExecutor(new AnnouncerCommand(this));
+        AnnouncerCommand command = new AnnouncerCommand(this);
+        PluginCommand announcer = Objects.requireNonNull(getCommand("shmessageannouncer"));
+        announcer.setExecutor(command);
+        announcer.setTabCompleter(command);
         getLogger().info("SHMessageAnnouncer has been enabled!");
     }
 
@@ -72,6 +82,32 @@ public final class SHMessageAnnouncer extends JavaPlugin {
         }
     }
 
+    /**
+     * {@code /shmessageannouncer reload} : config.yml et messages.yml sont lus et validés avant toute application. Si
+     * l'un est invalide, rien ne change (minuteur compris) et l'expéditeur reçoit le fichier et l'erreur. Ne vaut que
+     * pour ce serveur ; reseau.actif et reseau.canal demandent un redémarrage.
+     *
+     * @return vrai si tout a été rechargé
+     */
+    public boolean reload(CommandSender sender) {
+        saveDefaultConfig();
+        for (String name : new String[]{"config.yml", "messages.yml"}) {
+            try {
+                new YamlConfiguration().load(new File(getDataFolder(), name));
+            } catch (IOException | InvalidConfigurationException e) {
+                getLogger().severe("Reload cancelled, " + name + " is invalid: " + e.getMessage());
+                String text = String.valueOf(e.getMessage()).strip();
+                int end = text.indexOf('\n');
+                String error = end < 0 ? text : text.substring(0, end).strip();
+                messageManager.sendMessage(sender, "reload_failed", Placeholder.unparsed("file", name),
+                    Placeholder.unparsed("error", error.length() > 160 ? error.substring(0, 160) + "..." : error));
+                return false;
+            }
+        }
+        loadPlugin(true);
+        return true;
+    }
+
     public void loadPlugin(boolean isReload) {
         if (isReload) {
             stopTask();
@@ -87,7 +123,7 @@ public final class SHMessageAnnouncer extends JavaPlugin {
         }
     }
 
-    /** {@code /msa start} : avec SHNetwork, les annonces démarrent sur tout le réseau. */
+    /** {@code /shmessageannouncer start} : avec SHNetwork, les annonces démarrent sur tout le réseau. */
     public void startAnnouncer() {
         if (network != null) {
             network.setRunning(true);
@@ -96,7 +132,7 @@ public final class SHMessageAnnouncer extends JavaPlugin {
         startTask(0);
     }
 
-    /** {@code /msa stop} : avec SHNetwork, les annonces s'arrêtent sur tout le réseau. */
+    /** {@code /shmessageannouncer stop} : avec SHNetwork, les annonces s'arrêtent sur tout le réseau. */
     public void stopAnnouncer() {
         if (network != null) {
             network.setRunning(false);

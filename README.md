@@ -34,11 +34,11 @@ Le mode réseau ne s'active que si `SHNetwork` est chargé et que `reseau.actif`
 - **Placeholders.** Chaque serveur évalue les placeholders de PlaceholderAPI pour chacun de ses joueurs, sur place. Il n'y a pas de condition de permission ni de monde dans ce plugin : tous les joueurs connectés reçoivent l'annonce.
 - **Ordre unique.** Seul le meneur fait avancer la liste. Chaque annonce du minuteur porte le rang de la suivante : si le meneur tombe, le serveur qui le remplace reprend la liste à cet endroit, au lieu de repartir du début. Rien n'est annoncé tant que personne n'est connecté sur le réseau, et l'ordre n'avance pas.
 - **Commandes.**
-  - `/msa announce <id>` envoie l'annonce à tous les joueurs de tous les serveurs, sans toucher à l'ordre ; chaque serveur évalue les placeholders pour chacun de ses joueurs.
-  - `/msa announce <id> <joueur>` emprunte les placeholders d'un joueur, où qu'il soit sur le réseau : seul son serveur connaît ses données, il évalue donc l'annonce pour lui et les autres serveurs reçoivent le texte fini.
-  - `/msa send <joueur> <id>` atteint le joueur où qu'il soit sur le réseau.
-  - `/msa start` et `/msa stop` valent pour tout le réseau. L'état n'est pas gardé au redémarrage : au démarrage, `announcer_enabled` décide, comme avant.
-  - `/msa reload` ne relit la configuration que de ce serveur. Sur le meneur, le minuteur repart du début de la liste.
+  - `/shmessageannouncer announce <id>` envoie l'annonce à tous les joueurs de tous les serveurs, sans toucher à l'ordre ; chaque serveur évalue les placeholders pour chacun de ses joueurs.
+  - `/shmessageannouncer announce <id> <joueur>` emprunte les placeholders d'un joueur, où qu'il soit sur le réseau : seul son serveur connaît ses données, il évalue donc l'annonce pour lui et les autres serveurs reçoivent le texte fini.
+  - `/shmessageannouncer send <joueur> <id>` atteint le joueur où qu'il soit sur le réseau.
+  - `/shmessageannouncer start` et `/shmessageannouncer stop` valent pour tout le réseau. L'état n'est pas gardé au redémarrage : au démarrage, `announcer_enabled` décide, comme avant.
+  - `/shmessageannouncer reload` ne relit la configuration que de ce serveur. Sur le meneur, le minuteur repart du début de la liste.
 - **Reprise.** Le verrou de meneur est renouvelé chaque seconde ; si le meneur s'arrête ou perd Redis, un autre serveur prend la main en quelques secondes et relance le minuteur d'un délai `announce_interval` neuf.
 
 Clés de la section `reseau` du `config.yml` (un redémarrage est nécessaire pour les changer) :
@@ -54,14 +54,28 @@ Au démarrage, la console indique `SHNetwork détecté : une seule rotation d'an
 
 ## Commandes
 
-| Commande | Alias | Description | Permission |
-|---|---|---|---|
-| `/msa start` | `/shmessageannouncer` | Démarre les annonces automatiques (tout le réseau avec SHNetwork). | `shmessageannouncer.admin` |
-| `/msa stop` | `/shmessageannouncer` | Arrête les annonces automatiques (tout le réseau avec SHNetwork). | `shmessageannouncer.admin` |
-| `/msa reload` | `/shmessageannouncer` | Recharge `config.yml` et `messages.yml` sur ce serveur. | `shmessageannouncer.admin` |
-| `/msa list <active\|all>` | `/shmessageannouncer` | Liste les annonces de la rotation, ou toutes les annonces. | `shmessageannouncer.admin` |
-| `/msa announce <id> [joueur]` | `/shmessageannouncer` | Envoie une annonce à tous les joueurs (tous les serveurs avec SHNetwork), avec les placeholders du joueur donné. | `shmessageannouncer.admin` |
-| `/msa send <joueur> <id>` | `/shmessageannouncer` | Envoie une annonce à un joueur. | `shmessageannouncer.admin` |
+La commande est `/shmessageannouncer` (alias `/msa`). Toutes les sous-commandes marchent depuis la console. Sans argument, une ligne d'usage donne les sous-commandes que vous avez le droit d'utiliser.
+
+| Commande | Description | Permission |
+|---|---|---|
+| `/shmessageannouncer start` | Démarre les annonces automatiques (tout le réseau avec SHNetwork). | `shmessageannouncer.admin.start` |
+| `/shmessageannouncer stop` | Arrête les annonces automatiques (tout le réseau avec SHNetwork). | `shmessageannouncer.admin.stop` |
+| `/shmessageannouncer reload` | Recharge `config.yml` et `messages.yml` sur ce serveur ; si l'un est invalide, rien ne change et le message donne le fichier et l'erreur. | `shmessageannouncer.admin.reload` |
+| `/shmessageannouncer list <active\|all>` | Liste les annonces de la rotation, ou toutes les annonces. | `shmessageannouncer.admin.list` |
+| `/shmessageannouncer announce <id> [joueur]` | Envoie une annonce à tous les joueurs (tous les serveurs avec SHNetwork), avec les placeholders du joueur donné. | `shmessageannouncer.admin.announce` |
+| `/shmessageannouncer send <joueur> <id>` | Envoie une annonce à un joueur. | `shmessageannouncer.admin.send` |
+
+## Permissions
+
+| Permission | Description | Par défaut |
+|---|---|---|
+| `shmessageannouncer.admin` | Toutes les sous-commandes (parent des six suivantes). | `op` |
+| `shmessageannouncer.admin.start` | `/shmessageannouncer start` | `op` |
+| `shmessageannouncer.admin.stop` | `/shmessageannouncer stop` | `op` |
+| `shmessageannouncer.admin.reload` | `/shmessageannouncer reload` | `op` |
+| `shmessageannouncer.admin.list` | `/shmessageannouncer list` | `op` |
+| `shmessageannouncer.admin.announce` | `/shmessageannouncer announce` | `op` |
+| `shmessageannouncer.admin.send` | `/shmessageannouncer send` | `op` |
 
 ## Configuration
 

@@ -2,7 +2,6 @@ package org.Cry_Legende.sHMessageAnnouncer.config;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.Cry_Legende.sHMessageAnnouncer.SHMessageAnnouncer;
 import org.Cry_Legende.sHMessageAnnouncer.util.TextUtil;
@@ -16,13 +15,13 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class MessageManager {
 
     private final SHMessageAnnouncer plugin;
-    private final Map<String, String> messages = new HashMap<>();
-    private String prefix;
+    // Remplacée d'un bloc à chaque chargement : jamais lue à moitié remplie
+    private volatile Map<String, String> messages = Map.of();
+    private volatile String prefix = "";
 
     public MessageManager(SHMessageAnnouncer plugin) {
         this.plugin = plugin;
@@ -30,27 +29,34 @@ public class MessageManager {
 
     /**
      * Loads all messages from the messages.yml file into memory.
-     * It also sets up a fallback to the internal messages.yml if the external file is broken.
+     * Keys missing from the server's file (added by a newer version) are taken from the messages.yml of the jar.
      */
     public void load() {
-        messages.clear();
         File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messagesFile.exists()) {
             plugin.saveResource("messages.yml", false);
         }
+        apply(YamlConfiguration.loadConfiguration(messagesFile));
+    }
 
-        FileConfiguration config = YamlConfiguration.loadConfiguration(messagesFile);
-
-        // Fallback to internal messages.yml if the external one is missing keys
+    /** Applies an already parsed messages.yml (used by the reload, after validation). */
+    public void apply(FileConfiguration config) {
+        Map<String, String> loaded = new HashMap<>();
         InputStream defStream = plugin.getResource("messages.yml");
         if (defStream != null) {
-            config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, StandardCharsets.UTF_8)));
+            FileConfiguration defaults = YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, StandardCharsets.UTF_8));
+            for (String key : defaults.getKeys(false)) {
+                loaded.put(key, defaults.getString(key));
+            }
         }
-
-        for (String key : Objects.requireNonNull(config.getKeys(false))) {
-            messages.put(key, config.getString(key));
+        for (String key : config.getKeys(false)) {
+            String value = config.getString(key);
+            if (value != null) {
+                loaded.put(key, value);
+            }
         }
-        prefix = messages.getOrDefault("prefix", "");
+        messages = loaded;
+        prefix = loaded.getOrDefault("prefix", "");
     }
 
     /**
@@ -73,20 +79,5 @@ public class MessageManager {
 
         Component component = MiniMessage.miniMessage().deserialize(processedMessage, resolvers);
         sender.sendMessage(component);
-    }
-
-    /**
-     * Sends the formatted help message to a CommandSender.
-     */
-    public void sendHelp(CommandSender sender) {
-        String[] helpKeys = {"help_header", "help_start", "help_stop", "help_reload", "help_list", "help_send", "help_announce"};
-        for (String key : helpKeys) {
-            String message = messages.get(key);
-            if (message != null) {
-                // Apply the translation to each help line as well.
-                String processedHelpLine = TextUtil.translateLegacyCodes(message);
-                sender.sendMessage(MiniMessage.miniMessage().deserialize(processedHelpLine));
-            }
-        }
     }
 }

@@ -9,7 +9,37 @@ depend: [PlaceholderAPI]
 softdepend: [SHNetwork]
 
 commands:
-  msa:
-    description: Main command for SHMessageAnnouncer.
-    aliases: [shmessageannouncer]
-    permission: shmessageannouncer.admin
+  shmessageannouncer:
+    description: Administration des annonces automatiques (démarrer, arrêter, recharger, lister, envoyer).
+    usage: /<command> <start|stop|reload|list|announce|send>
+    aliases: [msa]
+
+permissions:
+  shmessageannouncer.admin:
+    description: Toutes les sous-commandes de /shmessageannouncer.
+    default: op
+    children:
+      shmessageannouncer.admin.start: true
+      shmessageannouncer.admin.stop: true
+      shmessageannouncer.admin.reload: true
+      shmessageannouncer.admin.list: true
+      shmessageannouncer.admin.announce: true
+      shmessageannouncer.admin.send: true
+  shmessageannouncer.admin.start:
+    description: Démarrer les annonces automatiques (/shmessageannouncer start).
+    default: op
+  shmessageannouncer.admin.stop:
+    description: Arrêter les annonces automatiques (/shmessageannouncer stop).
+    default: op
+  shmessageannouncer.admin.reload:
+    description: Recharger config.yml et messages.yml (/shmessageannouncer reload).
+    default: op
+  shmessageannouncer.admin.list:
+    description: Lister les annonces (/shmessageannouncer list).
+    default: op
+  shmessageannouncer.admin.announce:
+    description: Envoyer une annonce à tous les joueurs (/shmessageannouncer announce).
+    default: op
+  shmessageannouncer.admin.send:
+    description: Envoyer une annonce à un joueur (/shmessageannouncer send).
+    default: op

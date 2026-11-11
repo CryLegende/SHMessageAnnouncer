@@ -20,11 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <pre>
  * canal   serveur -> autres   {event: announce, id, index?}   annonce à tous les joueurs, évaluée sur chaque serveur
- *                             {event: shared, id, papi}       /msa announce avec un joueur : le serveur de ce joueur
+ *                             {event: shared, id, papi}       /shmessageannouncer announce avec un joueur : le serveur de ce joueur
  *                                                             évalue l'annonce pour lui et la publie en text
  *                             {event: text, lines}            annonce déjà évaluée, envoyée telle quelle
  *                             {event: send, uuid, id}         annonce à un joueur
- *                             {event: state, running}         /msa start et /msa stop
+ *                             {event: state, running}         /shmessageannouncer start et /shmessageannouncer stop
  * </pre>
  *
  * {@code index} accompagne les annonces du minuteur : c'est le rang de la prochaine annonce de la liste. Chaque serveur
@@ -100,7 +100,7 @@ public final class NetworkAnnouncer {
         return running;
     }
 
-    /** {@code /msa start} et {@code /msa stop} : l'état change sur tous les serveurs. */
+    /** {@code /shmessageannouncer start} et {@code /shmessageannouncer stop} : l'état change sur tous les serveurs. */
     public void setRunning(boolean value) {
         apply(value);
         JsonObject message = new JsonObject();
@@ -147,7 +147,7 @@ public final class NetworkAnnouncer {
     }
 
     /**
-     * {@code /msa announce}, sans joueur ou avec un joueur de ce serveur : l'annonce part à tous les joueurs de tous
+     * {@code /shmessageannouncer announce}, sans joueur ou avec un joueur de ce serveur : l'annonce part à tous les joueurs de tous
      * les serveurs, sans toucher à l'ordre. Avec un joueur, ses placeholders servent à toutes les lignes : elles sont
      * évaluées ici, puisque lui seul y est connu, et les autres serveurs reçoivent le texte fini.
      *
@@ -165,7 +165,7 @@ public final class NetworkAnnouncer {
         bus.publish(channel, message);
     }
 
-    /** {@code /msa announce} avec un joueur d'un autre serveur : c'est ce serveur-là qui évalue l'annonce. */
+    /** {@code /shmessageannouncer announce} avec un joueur d'un autre serveur : c'est ce serveur-là qui évalue l'annonce. */
     public void announceFor(String id, UUID papi) {
         JsonObject message = new JsonObject();
         message.addProperty("event", "shared");
@@ -174,7 +174,7 @@ public final class NetworkAnnouncer {
         bus.publish(channel, message);
     }
 
-    /** {@code /msa send} vers un joueur connecté sur le réseau : le serveur où il se trouve lui envoie l'annonce. */
+    /** {@code /shmessageannouncer send} vers un joueur connecté sur le réseau : le serveur où il se trouve lui envoie l'annonce. */
     public void send(UUID target, String id) {
         deliver(target, id);
         JsonObject message = new JsonObject();

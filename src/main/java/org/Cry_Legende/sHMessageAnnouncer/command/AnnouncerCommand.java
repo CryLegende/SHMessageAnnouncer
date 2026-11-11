@@ -15,13 +15,21 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * /shmessageannouncer (alias msa) : start, stop, reload, list, announce et send, chacune avec sa permission
+ * shmessageannouncer.admin.&lt;sous-commande&gt;. Tout marche depuis la console.
+ */
 public class AnnouncerCommand implements CommandExecutor, TabCompleter {
+
+    private static final List<String> SUBCOMMANDS = List.of("start", "stop", "reload", "list", "announce", "send");
+    private static final String PERMISSION_PREFIX = "shmessageannouncer.admin.";
+
     private final SHMessageAnnouncer plugin;
     private final MessageManager msg;
     private final AnnouncementManager announcementManager;
@@ -32,19 +40,22 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
         this.announcementManager = plugin.getAnnouncementManager();
     }
 
+    private static boolean can(CommandSender sender, String subCommand) {
+        return sender.hasPermission(PERMISSION_PREFIX + subCommand);
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!sender.hasPermission("shmessageannouncer.admin")) {
+        String subCommand = args.length > 0 ? args[0].toLowerCase(Locale.ROOT) : "";
+        if (!SUBCOMMANDS.contains(subCommand)) {
+            sendUsage(sender);
+            return true;
+        }
+        if (!can(sender, subCommand)) {
             msg.sendMessage(sender, "no_permission");
             return true;
         }
 
-        if (args.length == 0) {
-            msg.sendHelp(sender);
-            return true;
-        }
-
-        String subCommand = args[0].toLowerCase();
         switch (subCommand) {
             case "start" -> handleStart(sender);
             case "stop" -> handleStop(sender);
@@ -52,9 +63,19 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
             case "list" -> handleList(sender, args);
             case "announce" -> handleAnnounce(sender, args);
             case "send" -> handleSend(sender, args);
-            default -> msg.sendHelp(sender);
+            default -> sendUsage(sender);
         }
         return true;
+    }
+
+    /** Une seule ligne d'usage, limitée aux sous-commandes que l'expéditeur peut utiliser. */
+    private void sendUsage(CommandSender sender) {
+        List<String> allowed = SUBCOMMANDS.stream().filter(sub -> can(sender, sub)).collect(Collectors.toList());
+        if (allowed.isEmpty()) {
+            msg.sendMessage(sender, "no_permission");
+            return;
+        }
+        msg.sendMessage(sender, "usage", Placeholder.unparsed("subcommands", String.join("|", allowed)));
     }
 
     private void handleStart(CommandSender sender) {
@@ -76,16 +97,18 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleReload(CommandSender sender) {
-        plugin.loadPlugin(true);
-        msg.sendMessage(sender, "reload_success");
+        if (plugin.reload(sender)) {
+            msg.sendMessage(sender, "reload_success");
+            msg.sendMessage(sender, "reload_note");
+        }
     }
 
     private void handleList(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "/msa list <active/all>"));
+            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "list <active|all>"));
             return;
         }
-        String type = args[1].toLowerCase();
+        String type = args[1].toLowerCase(Locale.ROOT);
         List<String> ids;
         if (type.equals("active")) {
             ids = plugin.getConfigManager().getIntervalList();
@@ -95,7 +118,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
             Collections.sort(ids);
             msg.sendMessage(sender, "list_header_all");
         } else {
-            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "/msa list <active/all>"));
+            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "list <active|all>"));
             return;
         }
 
@@ -108,7 +131,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 
     private void handleAnnounce(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "/msa announce <id> [papi_player]"));
+            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "announce <id> [joueur]"));
             return;
         }
         String id = args[1];
@@ -146,7 +169,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 
     private void handleSend(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "/msa send <player> <id>"));
+            msg.sendMessage(sender, "invalid_usage", Placeholder.unparsed("arg", "send <joueur> <id>"));
             return;
         }
         Player target = Bukkit.getPlayer(args[1]);
@@ -180,18 +203,19 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (!sender.hasPermission("shmessageannouncer.admin")) {
-            return Collections.emptyList();
-        }
-
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            completions.addAll(Arrays.asList("start", "stop", "reload", "list", "announce", "send"));
+            SUBCOMMANDS.stream().filter(sub -> can(sender, sub)).forEach(completions::add);
             return StringUtil.copyPartialMatches(args[0], completions, new ArrayList<>());
-        } else if (args.length == 2) {
-            switch (args[0].toLowerCase()) {
+        }
+        String sub = args[0].toLowerCase(Locale.ROOT);
+        if (!SUBCOMMANDS.contains(sub) || !can(sender, sub)) {
+            return Collections.emptyList();
+        }
+        if (args.length == 2) {
+            switch (sub) {
                 case "list":
-                    completions.addAll(Arrays.asList("active", "all"));
+                    completions.addAll(List.of("active", "all"));
                     break;
                 case "send":
                     completions.addAll(playerNames());
@@ -201,7 +225,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
                     break;
             }
         } else if (args.length == 3) {
-            switch (args[0].toLowerCase()) {
+            switch (sub) {
                 case "send":
                     completions.addAll(announcementManager.getAnnouncementIds());
                     break;
