@@ -51,7 +51,6 @@ public final class SHMessageAnnouncer extends JavaPlugin {
         PluginCommand announcer = Objects.requireNonNull(getCommand("shmessageannouncer"));
         announcer.setExecutor(command);
         announcer.setTabCompleter(command);
-        getLogger().info("SHMessageAnnouncer has been enabled!");
     }
 
     @Override
@@ -60,7 +59,6 @@ public final class SHMessageAnnouncer extends JavaPlugin {
             network.disable();
         }
         stopTask();
-        getLogger().info("SHMessageAnnouncer has been disabled!");
     }
 
     /**
